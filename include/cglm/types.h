@@ -32,18 +32,38 @@
 #  define CGLM_ALIGN_MAT CGLM_ALIGN(16)
 #endif
 
-typedef float                   vec2[2];
-typedef float                   vec3[3];
-typedef int                    ivec3[3];
-typedef CGLM_ALIGN_IF(16) float vec4[4];
+//typedef float                   vec2[2];
+//typedef float2*					   vec2;
+//typedef float                   vec3[3];
+typedef float3*					   vec3;
+//typedef int                    ivec3[3];
+typedef int3                      ivec3;
+//typedef CGLM_ALIGN_IF(16) float vec4[4];
+typedef float4*					   vec4;
 typedef vec4                    versor;
-typedef vec3                    mat3[3];
+
+// mat3 is essentially a mat4 under the hood!
+// (alignment :)
+typedef struct _mat3 { float4 m[4]; } _mat3;
+typedef _mat3*						  mat3;
+
+// _mat4 to be used as parameters to kernel functions.
+// cglm types are essentially pointer types ( float[4] is equivalent to float*, and thus can't be
+// passed as kernel argument )
+typedef struct _mat4 { float4 m[4]; } _mat4;
+
+// mat4 pointer type to be used as parameters to cglm functions
+typedef _mat4*						mat4;
+
+/*
 
 #ifdef __AVX__
 typedef CGLM_ALIGN_IF(32) vec4  mat4[4];
 #else
 typedef CGLM_ALIGN_IF(16) vec4  mat4[4];
 #endif
+
+*/
 
 #define GLM_E         2.71828182845904523536028747135266250   /* e           */
 #define GLM_LOG2E     1.44269504088896340735992468100189214   /* log2(e)     */

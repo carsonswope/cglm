@@ -65,15 +65,15 @@ glm_translate(mat4 m, vec3 v) {
                                    glmm_load(m[3]))))
   ;
 #else
-  vec4 v1, v2, v3;
+  float4 v1, v2, v3;
 
-  glm_vec4_scale(m[0], v[0], v1);
-  glm_vec4_scale(m[1], v[1], v2);
-  glm_vec4_scale(m[2], v[2], v3);
+  glm_vec4_scale(m->m + 0, v->x, &v1);
+  glm_vec4_scale(m->m + 1, v->y, &v2);
+  glm_vec4_scale(m->m + 2, v->z, &v3);
 
-  glm_vec4_add(v1, m[3], m[3]);
-  glm_vec4_add(v2, m[3], m[3]);
-  glm_vec4_add(v3, m[3], m[3]);
+  glm_vec4_add(&v1, m->m + 3, m->m + 3);
+  glm_vec4_add(&v2, m->m + 3, m->m + 3);
+  glm_vec4_add(&v3, m->m + 3, m->m + 3);
 #endif
 }
 
@@ -110,9 +110,9 @@ glm_translate_x(mat4 m, float x) {
                         glmm_load(m[3])))
   ;
 #else
-  vec4 v1;
-  glm_vec4_scale(m[0], x, v1);
-  glm_vec4_add(v1, m[3], m[3]);
+  float4 v1;
+  glm_vec4_scale(m->m, x, &v1);
+  glm_vec4_add(&v1, m->m + 3, m->m + 3);
 #endif
 }
 
@@ -132,9 +132,9 @@ glm_translate_y(mat4 m, float y) {
                         glmm_load(m[3])))
   ;
 #else
-  vec4 v1;
-  glm_vec4_scale(m[1], y, v1);
-  glm_vec4_add(v1, m[3], m[3]);
+  float4 v1;
+  glm_vec4_scale(m->m + 1, y, &v1);
+  glm_vec4_add(&v1, m->m + 3, m->m + 3);
 #endif
 }
 
@@ -154,9 +154,9 @@ glm_translate_z(mat4 m, float z) {
                         glmm_load(m[3])))
   ;
 #else
-  vec4 v1;
-  glm_vec4_scale(m[2], z, v1);
-  glm_vec4_add(v1, m[3], m[3]);
+  float4 v1;
+  glm_vec4_scale(m->m + 2, z, &v1);
+  glm_vec4_add(&v1, m->m + 3, m->m + 3);
 #endif
 }
 
@@ -166,11 +166,11 @@ glm_translate_z(mat4 m, float z) {
  * @param[out]  m  affine transfrom
  * @param[in]   v  translate vector [x, y, z]
  */
-CGLM_INLINE
+//CGLM_INLINE
 void
 glm_translate_make(mat4 m, vec3 v) {
   glm_mat4_identity(m);
-  glm_vec3_copy(v, m[3]);
+  glm_vec3_copy(v, (vec3)(m->m + 3));
 }
 
 /*!
@@ -184,11 +184,11 @@ glm_translate_make(mat4 m, vec3 v) {
 CGLM_INLINE
 void
 glm_scale_to(mat4 m, vec3 v, mat4 dest) {
-  glm_vec4_scale(m[0], v[0], dest[0]);
-  glm_vec4_scale(m[1], v[1], dest[1]);
-  glm_vec4_scale(m[2], v[2], dest[2]);
+  glm_vec4_scale(m->m + 0, v->x, dest->m + 0);
+  glm_vec4_scale(m->m + 1, v->y, dest->m + 1);
+  glm_vec4_scale(m->m + 2, v->z, dest->m + 2);
 
-  glm_vec4_copy(m[3], dest[3]);
+  glm_vec4_copy(m->m + 3, dest->m + 3);
 }
 
 /*!
@@ -201,9 +201,9 @@ CGLM_INLINE
 void
 glm_scale_make(mat4 m, vec3 v) {
   glm_mat4_identity(m);
-  m[0][0] = v[0];
-  m[1][1] = v[1];
-  m[2][2] = v[2];
+  m->m[0].x = v->x;
+  m->m[1].y = v->y;
+  m->m[2].z = v->z;
 }
 
 /*!
@@ -229,8 +229,8 @@ glm_scale(mat4 m, vec3 v) {
 CGLM_INLINE
 void
 glm_scale_uni(mat4 m, float s) {
-  CGLM_ALIGN(8) vec3 v = { s, s, s };
-  glm_scale_to(m, v, m);
+  CGLM_ALIGN(8) float3 v = (float3){ s, s, s };
+  glm_scale_to(m, &v, m);
 }
 
 /*!
@@ -244,18 +244,18 @@ glm_scale_uni(mat4 m, float s) {
 CGLM_INLINE
 void
 glm_rotate_x(mat4 m, float angle, mat4 dest) {
-  CGLM_ALIGN_MAT mat4 t = GLM_MAT4_IDENTITY_INIT;
+  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
   float c, s;
 
   c = cosf(angle);
   s = sinf(angle);
 
-  t[1][1] =  c;
-  t[1][2] =  s;
-  t[2][1] = -s;
-  t[2][2] =  c;
+  t.m[1].y =  c;
+  t.m[1].z =  s;
+  t.m[2].y = -s;
+  t.m[2].z =  c;
 
-  glm_mul_rot(m, t, dest);
+  glm_mul_rot(m, &t, dest);
 }
 
 /*!
@@ -269,18 +269,18 @@ glm_rotate_x(mat4 m, float angle, mat4 dest) {
 CGLM_INLINE
 void
 glm_rotate_y(mat4 m, float angle, mat4 dest) {
-  CGLM_ALIGN_MAT mat4 t = GLM_MAT4_IDENTITY_INIT;
+  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
   float c, s;
 
   c = cosf(angle);
   s = sinf(angle);
 
-  t[0][0] =  c;
-  t[0][2] = -s;
-  t[2][0] =  s;
-  t[2][2] =  c;
+  t.m[0].x =  c;
+  t.m[0].z = -s;
+  t.m[2].x =  s;
+  t.m[2].z =  c;
 
-  glm_mul_rot(m, t, dest);
+  glm_mul_rot(m, &t, dest);
 }
 
 /*!
@@ -294,18 +294,18 @@ glm_rotate_y(mat4 m, float angle, mat4 dest) {
 CGLM_INLINE
 void
 glm_rotate_z(mat4 m, float angle, mat4 dest) {
-  CGLM_ALIGN_MAT mat4 t = GLM_MAT4_IDENTITY_INIT;
+  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
   float c, s;
 
   c = cosf(angle);
   s = sinf(angle);
 
-  t[0][0] =  c;
-  t[0][1] =  s;
-  t[1][0] = -s;
-  t[1][1] =  c;
+  t.m[0].x =  c;
+  t.m[0].y =  s;
+  t.m[1].x = -s;
+  t.m[1].y =  c;
 
-  glm_mul_rot(m, t, dest);
+  glm_mul_rot(m, &t, dest);
 }
 
 /*!
@@ -320,25 +320,25 @@ glm_rotate_z(mat4 m, float angle, mat4 dest) {
 CGLM_INLINE
 void
 glm_rotate_make(mat4 m, float angle, vec3 axis) {
-  CGLM_ALIGN(8) vec3 axisn, v, vs;
+  CGLM_ALIGN(8) float3 axisn, v, vs;
   float c;
 
   c = cosf(angle);
 
-  glm_vec3_normalize_to(axis, axisn);
-  glm_vec3_scale(axisn, 1.0f - c, v);
-  glm_vec3_scale(axisn, sinf(angle), vs);
+  glm_vec3_normalize_to(axis, &axisn);
+  glm_vec3_scale(&axisn, 1.0f - c, &v);
+  glm_vec3_scale(&axisn, sinf(angle), &vs);
 
-  glm_vec3_scale(axisn, v[0], m[0]);
-  glm_vec3_scale(axisn, v[1], m[1]);
-  glm_vec3_scale(axisn, v[2], m[2]);
+  glm_vec3_scale(&axisn, v.x, (vec3)(m->m + 0));
+  glm_vec3_scale(&axisn, v.y, (vec3)(m->m + 1));
+  glm_vec3_scale(&axisn, v.z, (vec3)(m->m + 2));
 
-  m[0][0] += c;       m[1][0] -= vs[2];   m[2][0] += vs[1];
-  m[0][1] += vs[2];   m[1][1] += c;       m[2][1] -= vs[0];
-  m[0][2] -= vs[1];   m[1][2] += vs[0];   m[2][2] += c;
+  m->m[0].x += c;       m->m[1].x -= vs.z;    m->m[2].x += vs.y;
+  m->m[0].y += vs.z;    m->m[1].y += c;       m->m[2].y -= vs.x;
+  m->m[0].z -= vs.y;    m->m[1].z += vs.x;    m->m[2].z += c;
 
-  m[0][3] = m[1][3] = m[2][3] = m[3][0] = m[3][1] = m[3][2] = 0.0f;
-  m[3][3] = 1.0f;
+  m->m[0].w = m->m[1].w = m->m[2].w = m->m[3].x = m->m[3].y = m->m[3].z = 0.0f;
+  m->m[3].w = 1.0f;
 }
 
 /*!
@@ -411,9 +411,9 @@ glm_rotate_atm(mat4 m, vec3 pivot, float angle, vec3 axis) {
 CGLM_INLINE
 void
 glm_decompose_scalev(mat4 m, vec3 s) {
-  s[0] = glm_vec3_norm(m[0]);
-  s[1] = glm_vec3_norm(m[1]);
-  s[2] = glm_vec3_norm(m[2]);
+  s->x = glm_vec3_norm((vec3)(m->m + 0));
+  s->y = glm_vec3_norm((vec3)(m->m + 1));
+  s->z = glm_vec3_norm((vec3)(m->m + 2));
 }
 
 /*!
@@ -427,9 +427,9 @@ glm_decompose_scalev(mat4 m, vec3 s) {
 CGLM_INLINE
 bool
 glm_uniscaled(mat4 m) {
-  CGLM_ALIGN(8) vec3 s;
-  glm_decompose_scalev(m, s);
-  return glm_vec3_eq_all(s);
+  CGLM_ALIGN(8) float3 s;
+  glm_decompose_scalev(m, &s);
+  return glm_vec3_eq_all(&s);
 }
 
 /*!
@@ -443,30 +443,30 @@ glm_uniscaled(mat4 m) {
 CGLM_INLINE
 void
 glm_decompose_rs(mat4 m, mat4 r, vec3 s) {
-  CGLM_ALIGN(16) vec4 t = {0.0f, 0.0f, 0.0f, 1.0f};
-  CGLM_ALIGN(8)  vec3 v;
+  CGLM_ALIGN(16) float4 t = (float4){0.0f, 0.0f, 0.0f, 1.0f};
+  CGLM_ALIGN(8)  float3 v;
 
-  glm_vec4_copy(m[0], r[0]);
-  glm_vec4_copy(m[1], r[1]);
-  glm_vec4_copy(m[2], r[2]);
-  glm_vec4_copy(t,    r[3]);
+  glm_vec4_copy(m->m + 0, r->m + 0);
+  glm_vec4_copy(m->m + 1, r->m + 1);
+  glm_vec4_copy(m->m + 2, r->m + 2);
+  glm_vec4_copy(&t,       r->m + 3);
 
-  s[0] = glm_vec3_norm(m[0]);
-  s[1] = glm_vec3_norm(m[1]);
-  s[2] = glm_vec3_norm(m[2]);
+  s->x = glm_vec3_norm((vec3)(m->m + 0));
+  s->y = glm_vec3_norm((vec3)(m->m + 1));
+  s->z = glm_vec3_norm((vec3)(m->m + 2));
 
-  glm_vec4_scale(r[0], 1.0f/s[0], r[0]);
-  glm_vec4_scale(r[1], 1.0f/s[1], r[1]);
-  glm_vec4_scale(r[2], 1.0f/s[2], r[2]);
+  glm_vec4_scale(r->m + 0, 1.0f/s->x, r->m + 0);
+  glm_vec4_scale(r->m + 1, 1.0f/s->y, r->m + 1);
+  glm_vec4_scale(r->m + 2, 1.0f/s->z, r->m + 2);
 
   /* Note from Apple Open Source (asume that the matrix is orthonormal):
      check for a coordinate system flip.  If the determinant
      is -1, then negate the matrix and the scaling factors. */
-  glm_vec3_cross(m[0], m[1], v);
-  if (glm_vec3_dot(v, m[2]) < 0.0f) {
-    glm_vec4_negate(r[0]);
-    glm_vec4_negate(r[1]);
-    glm_vec4_negate(r[2]);
+  glm_vec3_cross((vec3)(m->m + 0), (vec3)(m->m + 1), &v);
+  if (glm_vec3_dot(&v, (vec3)(m->m + 2)) < 0.0f) {
+    glm_vec4_negate(r->m + 0);
+    glm_vec4_negate(r->m + 1);
+    glm_vec4_negate(r->m + 2);
     glm_vec3_negate(s);
   }
 }
@@ -483,7 +483,7 @@ glm_decompose_rs(mat4 m, mat4 r, vec3 s) {
 CGLM_INLINE
 void
 glm_decompose(mat4 m, vec4 t, mat4 r, vec3 s) {
-  glm_vec4_copy(m[3], t);
+  glm_vec4_copy(m->m + 3, t);
   glm_decompose_rs(m, r, s);
 }
 

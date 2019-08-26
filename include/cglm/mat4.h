@@ -68,19 +68,19 @@
 # include <assert.h>
 #endif
 
-#define GLM_MAT4_IDENTITY_INIT  {{1.0f, 0.0f, 0.0f, 0.0f},                    \
-                                 {0.0f, 1.0f, 0.0f, 0.0f},                    \
-                                 {0.0f, 0.0f, 1.0f, 0.0f},                    \
-                                 {0.0f, 0.0f, 0.0f, 1.0f}}
+#define GLM_MAT4_IDENTITY_INIT  {{(float4){1.0f, 0.0f, 0.0f, 0.0f},                    \
+                                 (float4){0.0f, 1.0f, 0.0f, 0.0f},                    \
+                                 (float4){0.0f, 0.0f, 1.0f, 0.0f},                    \
+                                 (float4){0.0f, 0.0f, 0.0f, 1.0f}}}
 
-#define GLM_MAT4_ZERO_INIT      {{0.0f, 0.0f, 0.0f, 0.0f},                    \
-                                 {0.0f, 0.0f, 0.0f, 0.0f},                    \
-                                 {0.0f, 0.0f, 0.0f, 0.0f},                    \
-                                 {0.0f, 0.0f, 0.0f, 0.0f}}
+#define GLM_MAT4_ZERO_INIT      {{(float4){0.0f, 0.0f, 0.0f, 0.0f},                    \
+                                 (float4){0.0f, 0.0f, 0.0f, 0.0f},                    \
+                                 (float4){0.0f, 0.0f, 0.0f, 0.0f},                    \
+                                 (float4){0.0f, 0.0f, 0.0f, 0.0f}}}
 
 /* for C only */
-#define GLM_MAT4_IDENTITY ((mat4)GLM_MAT4_IDENTITY_INIT)
-#define GLM_MAT4_ZERO     ((mat4)GLM_MAT4_ZERO_INIT)
+#define GLM_MAT4_IDENTITY ((_mat4)GLM_MAT4_IDENTITY_INIT)
+#define GLM_MAT4_ZERO     ((_mat4)GLM_MAT4_ZERO_INIT)
 
 /* DEPRECATED! use _copy, _ucopy versions */
 #define glm_mat4_udup(mat, dest) glm_mat4_ucopy(mat, dest)
@@ -101,15 +101,15 @@
 CGLM_INLINE
 void
 glm_mat4_ucopy(mat4 mat, mat4 dest) {
-  dest[0][0] = mat[0][0];  dest[1][0] = mat[1][0];
-  dest[0][1] = mat[0][1];  dest[1][1] = mat[1][1];
-  dest[0][2] = mat[0][2];  dest[1][2] = mat[1][2];
-  dest[0][3] = mat[0][3];  dest[1][3] = mat[1][3];
+  dest->m[0].x = mat->m[0].x;  dest->m[1].x = mat->m[1].x;
+  dest->m[0].y = mat->m[0].y;  dest->m[1].y = mat->m[1].y;
+  dest->m[0].z = mat->m[0].z;  dest->m[1].z = mat->m[1].z;
+  dest->m[0].w = mat->m[0].w;  dest->m[1].w = mat->m[1].w;
 
-  dest[2][0] = mat[2][0];  dest[3][0] = mat[3][0];
-  dest[2][1] = mat[2][1];  dest[3][1] = mat[3][1];
-  dest[2][2] = mat[2][2];  dest[3][2] = mat[3][2];
-  dest[2][3] = mat[2][3];  dest[3][3] = mat[3][3];
+  dest->m[2].x = mat->m[2].x;  dest->m[3].x = mat->m[3].x;
+  dest->m[2].y = mat->m[2].y;  dest->m[3].y = mat->m[3].y;
+  dest->m[2].z = mat->m[2].z;  dest->m[3].z = mat->m[3].z;
+  dest->m[2].w = mat->m[2].w;  dest->m[3].w = mat->m[3].w;
 }
 
 /*!
@@ -156,8 +156,8 @@ glm_mat4_copy(mat4 mat, mat4 dest) {
 CGLM_INLINE
 void
 glm_mat4_identity(mat4 mat) {
-  CGLM_ALIGN_MAT mat4 t = GLM_MAT4_IDENTITY_INIT;
-  glm_mat4_copy(t, mat);
+  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY;
+  glm_mat4_copy(&t, mat);
 }
 
 /*!
@@ -171,11 +171,11 @@ glm_mat4_identity(mat4 mat) {
 CGLM_INLINE
 void
 glm_mat4_identity_array(mat4 * __restrict mat, size_t count) {
-  CGLM_ALIGN_MAT mat4 t = GLM_MAT4_IDENTITY_INIT;
+  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY;
   size_t i;
 
   for (i = 0; i < count; i++) {
-    glm_mat4_copy(t, mat[i]);
+    glm_mat4_copy(&t, mat[i]);
   }
 }
 
@@ -187,8 +187,8 @@ glm_mat4_identity_array(mat4 * __restrict mat, size_t count) {
 CGLM_INLINE
 void
 glm_mat4_zero(mat4 mat) {
-  CGLM_ALIGN_MAT mat4 t = GLM_MAT4_ZERO_INIT;
-  glm_mat4_copy(t, mat);
+  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_ZERO;
+  glm_mat4_copy(&t, mat);
 }
 
 /*!
@@ -200,17 +200,17 @@ glm_mat4_zero(mat4 mat) {
 CGLM_INLINE
 void
 glm_mat4_pick3(mat4 mat, mat3 dest) {
-  dest[0][0] = mat[0][0];
-  dest[0][1] = mat[0][1];
-  dest[0][2] = mat[0][2];
+  dest->m[0].x = mat->m[0].x;
+  dest->m[0].y = mat->m[0].y;
+  dest->m[0].z = mat->m[0].z;
 
-  dest[1][0] = mat[1][0];
-  dest[1][1] = mat[1][1];
-  dest[1][2] = mat[1][2];
+  dest->m[1].x = mat->m[1].x;
+  dest->m[1].y = mat->m[1].y;
+  dest->m[1].z = mat->m[1].z;
 
-  dest[2][0] = mat[2][0];
-  dest[2][1] = mat[2][1];
-  dest[2][2] = mat[2][2];
+  dest->m[2].x = mat->m[2].x;
+  dest->m[2].y = mat->m[2].y;
+  dest->m[2].z = mat->m[2].z;
 }
 
 /*!
@@ -224,17 +224,17 @@ glm_mat4_pick3(mat4 mat, mat3 dest) {
 CGLM_INLINE
 void
 glm_mat4_pick3t(mat4 mat, mat3 dest) {
-  dest[0][0] = mat[0][0];
-  dest[0][1] = mat[1][0];
-  dest[0][2] = mat[2][0];
+  dest->m[0].x = mat->m[0].x;
+  dest->m[0].y = mat->m[1].x;
+  dest->m[0].z = mat->m[2].x;
 
-  dest[1][0] = mat[0][1];
-  dest[1][1] = mat[1][1];
-  dest[1][2] = mat[2][1];
+  dest->m[1].x = mat->m[0].y;
+  dest->m[1].y = mat->m[1].y;
+  dest->m[1].z = mat->m[2].y;
 
-  dest[2][0] = mat[0][2];
-  dest[2][1] = mat[1][2];
-  dest[2][2] = mat[2][2];
+  dest->m[2].x = mat->m[0].z;
+  dest->m[2].y = mat->m[1].z;
+  dest->m[2].z = mat->m[2].z;
 }
 
 /*!
@@ -246,17 +246,17 @@ glm_mat4_pick3t(mat4 mat, mat3 dest) {
 CGLM_INLINE
 void
 glm_mat4_ins3(mat3 mat, mat4 dest) {
-  dest[0][0] = mat[0][0];
-  dest[0][1] = mat[0][1];
-  dest[0][2] = mat[0][2];
+  dest->m[0].x = mat->m[0].x;
+  dest->m[0].y = mat->m[0].y;
+  dest->m[0].z = mat->m[0].z;
 
-  dest[1][0] = mat[1][0];
-  dest[1][1] = mat[1][1];
-  dest[1][2] = mat[1][2];
+  dest->m[1].x = mat->m[1].x;
+  dest->m[1].y = mat->m[1].y;
+  dest->m[1].z = mat->m[1].z;
 
-  dest[2][0] = mat[2][0];
-  dest[2][1] = mat[2][1];
-  dest[2][2] = mat[2][2];
+  dest->m[2].x = mat->m[2].x;
+  dest->m[2].y = mat->m[2].y;
+  dest->m[2].z = mat->m[2].z;
 }
 
 /*!
@@ -283,32 +283,32 @@ glm_mat4_mul(mat4 m1, mat4 m2, mat4 dest) {
 #elif defined(CGLM_NEON_FP)
   glm_mat4_mul_neon(m1, m2, dest);
 #else
-  float a00 = m1[0][0], a01 = m1[0][1], a02 = m1[0][2], a03 = m1[0][3],
-        a10 = m1[1][0], a11 = m1[1][1], a12 = m1[1][2], a13 = m1[1][3],
-        a20 = m1[2][0], a21 = m1[2][1], a22 = m1[2][2], a23 = m1[2][3],
-        a30 = m1[3][0], a31 = m1[3][1], a32 = m1[3][2], a33 = m1[3][3],
+  float a00 = m1->m[0].x, a01 = m1->m[0].y, a02 = m1->m[0].z, a03 = m1->m[0].w,
+        a10 = m1->m[1].x, a11 = m1->m[1].y, a12 = m1->m[1].z, a13 = m1->m[1].w,
+        a20 = m1->m[2].x, a21 = m1->m[2].y, a22 = m1->m[2].z, a23 = m1->m[2].w,
+        a30 = m1->m[3].x, a31 = m1->m[3].y, a32 = m1->m[3].z, a33 = m1->m[3].w,
 
-        b00 = m2[0][0], b01 = m2[0][1], b02 = m2[0][2], b03 = m2[0][3],
-        b10 = m2[1][0], b11 = m2[1][1], b12 = m2[1][2], b13 = m2[1][3],
-        b20 = m2[2][0], b21 = m2[2][1], b22 = m2[2][2], b23 = m2[2][3],
-        b30 = m2[3][0], b31 = m2[3][1], b32 = m2[3][2], b33 = m2[3][3];
+        b00 = m2->m[0].x, b01 = m2->m[0].y, b02 = m2->m[0].z, b03 = m2->m[0].w,
+        b10 = m2->m[1].x, b11 = m2->m[1].y, b12 = m2->m[1].z, b13 = m2->m[1].w,
+        b20 = m2->m[2].x, b21 = m2->m[2].y, b22 = m2->m[2].z, b23 = m2->m[2].w,
+        b30 = m2->m[3].x, b31 = m2->m[3].y, b32 = m2->m[3].z, b33 = m2->m[3].w;
 
-  dest[0][0] = a00 * b00 + a10 * b01 + a20 * b02 + a30 * b03;
-  dest[0][1] = a01 * b00 + a11 * b01 + a21 * b02 + a31 * b03;
-  dest[0][2] = a02 * b00 + a12 * b01 + a22 * b02 + a32 * b03;
-  dest[0][3] = a03 * b00 + a13 * b01 + a23 * b02 + a33 * b03;
-  dest[1][0] = a00 * b10 + a10 * b11 + a20 * b12 + a30 * b13;
-  dest[1][1] = a01 * b10 + a11 * b11 + a21 * b12 + a31 * b13;
-  dest[1][2] = a02 * b10 + a12 * b11 + a22 * b12 + a32 * b13;
-  dest[1][3] = a03 * b10 + a13 * b11 + a23 * b12 + a33 * b13;
-  dest[2][0] = a00 * b20 + a10 * b21 + a20 * b22 + a30 * b23;
-  dest[2][1] = a01 * b20 + a11 * b21 + a21 * b22 + a31 * b23;
-  dest[2][2] = a02 * b20 + a12 * b21 + a22 * b22 + a32 * b23;
-  dest[2][3] = a03 * b20 + a13 * b21 + a23 * b22 + a33 * b23;
-  dest[3][0] = a00 * b30 + a10 * b31 + a20 * b32 + a30 * b33;
-  dest[3][1] = a01 * b30 + a11 * b31 + a21 * b32 + a31 * b33;
-  dest[3][2] = a02 * b30 + a12 * b31 + a22 * b32 + a32 * b33;
-  dest[3][3] = a03 * b30 + a13 * b31 + a23 * b32 + a33 * b33;
+  dest->m[0].x = a00 * b00 + a10 * b01 + a20 * b02 + a30 * b03;
+  dest->m[0].y = a01 * b00 + a11 * b01 + a21 * b02 + a31 * b03;
+  dest->m[0].z = a02 * b00 + a12 * b01 + a22 * b02 + a32 * b03;
+  dest->m[0].w = a03 * b00 + a13 * b01 + a23 * b02 + a33 * b03;
+  dest->m[1].x = a00 * b10 + a10 * b11 + a20 * b12 + a30 * b13;
+  dest->m[1].y = a01 * b10 + a11 * b11 + a21 * b12 + a31 * b13;
+  dest->m[1].z = a02 * b10 + a12 * b11 + a22 * b12 + a32 * b13;
+  dest->m[1].w = a03 * b10 + a13 * b11 + a23 * b12 + a33 * b13;
+  dest->m[2].x = a00 * b20 + a10 * b21 + a20 * b22 + a30 * b23;
+  dest->m[2].y = a01 * b20 + a11 * b21 + a21 * b22 + a31 * b23;
+  dest->m[2].z = a02 * b20 + a12 * b21 + a22 * b22 + a32 * b23;
+  dest->m[2].w = a03 * b20 + a13 * b21 + a23 * b22 + a33 * b23;
+  dest->m[3].x = a00 * b30 + a10 * b31 + a20 * b32 + a30 * b33;
+  dest->m[3].y = a01 * b30 + a11 * b31 + a21 * b32 + a31 * b33;
+  dest->m[3].z = a02 * b30 + a12 * b31 + a22 * b32 + a32 * b33;
+  dest->m[3].w = a03 * b30 + a13 * b31 + a23 * b32 + a33 * b33;
 #endif
 }
 
@@ -359,12 +359,12 @@ glm_mat4_mulv(mat4 m, vec4 v, vec4 dest) {
 #if defined( __SSE__ ) || defined( __SSE2__ )
   glm_mat4_mulv_sse2(m, v, dest);
 #else
-  vec4 res;
-  res[0] = m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2] + m[3][0] * v[3];
-  res[1] = m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2] + m[3][1] * v[3];
-  res[2] = m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2] + m[3][2] * v[3];
-  res[3] = m[0][3] * v[0] + m[1][3] * v[1] + m[2][3] * v[2] + m[3][3] * v[3];
-  glm_vec4_copy(res, dest);
+  float4 res;
+  res.x = m->m[0].x * v->x + m->m[1].x * v->y + m->m[2].x * v->z + m->m[3].x * v->w;
+  res.y = m->m[0].y * v->x + m->m[1].y * v->y + m->m[2].y * v->z + m->m[3].y * v->w;
+  res.z = m->m[0].z * v->x + m->m[1].z * v->y + m->m[2].z * v->z + m->m[3].z * v->w;
+  res.w = m->m[0].w * v->x + m->m[1].w * v->y + m->m[2].w * v->z + m->m[3].w * v->w;
+  glm_vec4_copy(&res, dest);
 #endif
 }
 
@@ -378,7 +378,7 @@ glm_mat4_mulv(mat4 m, vec4 v, vec4 dest) {
 CGLM_INLINE
 float
 glm_mat4_trace(mat4 m) {
-  return m[0][0] + m[1][1] + m[2][2] + m[3][3];
+  return m->m[0].x + m->m[1].y + m->m[2].z + m->m[3].w;
 }
 
 /*!
@@ -391,7 +391,7 @@ glm_mat4_trace(mat4 m) {
 CGLM_INLINE
 float
 glm_mat4_trace3(mat4 m) {
-  return m[0][0] + m[1][1] + m[2][2];
+  return m->m[0].x + m->m[1].y + m->m[2].z;
 }
 
 /*!
@@ -405,41 +405,41 @@ void
 glm_mat4_quat(mat4 m, versor dest) {
   float trace, r, rinv;
 
-  /* it seems using like m12 instead of m[1][2] causes extra instructions */
+  /* it seems using like m12 instead of m->m[1].z causes extra instructions */
 
-  trace = m[0][0] + m[1][1] + m[2][2];
+  trace = m->m[0].x + m->m[1].y + m->m[2].z;
   if (trace >= 0.0f) {
     r       = sqrtf(1.0f + trace);
     rinv    = 0.5f / r;
 
-    dest[0] = rinv * (m[1][2] - m[2][1]);
-    dest[1] = rinv * (m[2][0] - m[0][2]);
-    dest[2] = rinv * (m[0][1] - m[1][0]);
+    dest[0] = rinv * (m->m[1].z - m->m[2].y);
+    dest[1] = rinv * (m->m[2].x - m->m[0].z);
+    dest[2] = rinv * (m->m[0].y - m->m[1].x);
     dest[3] = r    * 0.5f;
-  } else if (m[0][0] >= m[1][1] && m[0][0] >= m[2][2]) {
-    r       = sqrtf(1.0f - m[1][1] - m[2][2] + m[0][0]);
+  } else if (m->m[0].x >= m->m[1].y && m->m[0].x >= m->m[2].z) {
+    r       = sqrtf(1.0f - m->m[1].y - m->m[2].z + m->m[0].x);
     rinv    = 0.5f / r;
 
     dest[0] = r    * 0.5f;
-    dest[1] = rinv * (m[0][1] + m[1][0]);
-    dest[2] = rinv * (m[0][2] + m[2][0]);
-    dest[3] = rinv * (m[1][2] - m[2][1]);
-  } else if (m[1][1] >= m[2][2]) {
-    r       = sqrtf(1.0f - m[0][0] - m[2][2] + m[1][1]);
+    dest[1] = rinv * (m->m[0].y + m->m[1].x);
+    dest[2] = rinv * (m->m[0].z + m->m[2].x);
+    dest[3] = rinv * (m->m[1].z - m->m[2].y);
+  } else if (m->m[1].y >= m->m[2].z) {
+    r       = sqrtf(1.0f - m->m[0].x - m->m[2].z + m->m[1].y);
     rinv    = 0.5f / r;
 
-    dest[0] = rinv * (m[0][1] + m[1][0]);
+    dest[0] = rinv * (m->m[0].y + m->m[1].x);
     dest[1] = r    * 0.5f;
-    dest[2] = rinv * (m[1][2] + m[2][1]);
-    dest[3] = rinv * (m[2][0] - m[0][2]);
+    dest[2] = rinv * (m->m[1].z + m->m[2].y);
+    dest[3] = rinv * (m->m[2].x - m->m[0].z);
   } else {
-    r       = sqrtf(1.0f - m[0][0] - m[1][1] + m[2][2]);
+    r       = sqrtf(1.0f - m->m[0].x - m->m[1].y + m->m[2].z);
     rinv    = 0.5f / r;
 
-    dest[0] = rinv * (m[0][2] + m[2][0]);
-    dest[1] = rinv * (m[1][2] + m[2][1]);
+    dest[0] = rinv * (m->m[0].z + m->m[2].x);
+    dest[1] = rinv * (m->m[1].z + m->m[2].y);
     dest[2] = r    * 0.5f;
-    dest[3] = rinv * (m[0][1] - m[1][0]);
+    dest[3] = rinv * (m->m[0].y - m->m[1].x);
   }
 }
 
@@ -474,14 +474,14 @@ glm_mat4_transpose_to(mat4 m, mat4 dest) {
 #if defined( __SSE__ ) || defined( __SSE2__ )
   glm_mat4_transp_sse2(m, dest);
 #else
-  dest[0][0] = m[0][0]; dest[1][0] = m[0][1];
-  dest[0][1] = m[1][0]; dest[1][1] = m[1][1];
-  dest[0][2] = m[2][0]; dest[1][2] = m[2][1];
-  dest[0][3] = m[3][0]; dest[1][3] = m[3][1];
-  dest[2][0] = m[0][2]; dest[3][0] = m[0][3];
-  dest[2][1] = m[1][2]; dest[3][1] = m[1][3];
-  dest[2][2] = m[2][2]; dest[3][2] = m[2][3];
-  dest[2][3] = m[3][2]; dest[3][3] = m[3][3];
+  dest->m[0].x = m->m[0].x; dest->m[1].x = m->m[0].y;
+  dest->m[0].y = m->m[1].x; dest->m[1].y = m->m[1].y;
+  dest->m[0].z = m->m[2].x; dest->m[1].z = m->m[2].y;
+  dest->m[0].w = m->m[3].x; dest->m[1].w = m->m[3].y;
+  dest->m[2].x = m->m[0].z; dest->m[3].x = m->m[0].w;
+  dest->m[2].y = m->m[1].z; dest->m[3].y = m->m[1].w;
+  dest->m[2].z = m->m[2].z; dest->m[3].z = m->m[2].w;
+  dest->m[2].w = m->m[3].z; dest->m[3].w = m->m[3].w;
 #endif
 }
 
@@ -496,9 +496,9 @@ glm_mat4_transpose(mat4 m) {
 #if defined( __SSE__ ) || defined( __SSE2__ )
   glm_mat4_transp_sse2(m, m);
 #else
-  mat4 d;
-  glm_mat4_transpose_to(m, d);
-  glm_mat4_ucopy(d, m);
+  _mat4 d;
+  glm_mat4_transpose_to(m, &d);
+  glm_mat4_ucopy(&d, m);
 #endif
 }
 
@@ -513,10 +513,10 @@ glm_mat4_transpose(mat4 m) {
 CGLM_INLINE
 void
 glm_mat4_scale_p(mat4 m, float s) {
-  m[0][0] *= s; m[0][1] *= s; m[0][2] *= s; m[0][3] *= s;
-  m[1][0] *= s; m[1][1] *= s; m[1][2] *= s; m[1][3] *= s;
-  m[2][0] *= s; m[2][1] *= s; m[2][2] *= s; m[2][3] *= s;
-  m[3][0] *= s; m[3][1] *= s; m[3][2] *= s; m[3][3] *= s;
+  m->m[0].x *= s; m->m[0].y *= s; m->m[0].z *= s; m->m[0].w *= s;
+  m->m[1].x *= s; m->m[1].y *= s; m->m[1].z *= s; m->m[1].w *= s;
+  m->m[2].x *= s; m->m[2].y *= s; m->m[2].z *= s; m->m[2].w *= s;
+  m->m[3].x *= s; m->m[3].y *= s; m->m[3].z *= s; m->m[3].w *= s;
 }
 
 /*!
@@ -559,10 +559,10 @@ glm_mat4_det(mat4 mat) {
 #else
   /* [square] det(A) = det(At) */
   float t[6];
-  float a = mat[0][0], b = mat[0][1], c = mat[0][2], d = mat[0][3],
-        e = mat[1][0], f = mat[1][1], g = mat[1][2], h = mat[1][3],
-        i = mat[2][0], j = mat[2][1], k = mat[2][2], l = mat[2][3],
-        m = mat[3][0], n = mat[3][1], o = mat[3][2], p = mat[3][3];
+  float a = mat->m[0].x, b = mat->m[0].y, c = mat->m[0].z, d = mat->m[0].w,
+        e = mat->m[1].x, f = mat->m[1].y, g = mat->m[1].z, h = mat->m[1].w,
+        i = mat->m[2].x, j = mat->m[2].y, k = mat->m[2].z, l = mat->m[2].w,
+        m = mat->m[3].x, n = mat->m[3].y, o = mat->m[3].z, p = mat->m[3].w;
 
   t[0] = k * p - o * l;
   t[1] = j * p - n * l;
@@ -592,42 +592,42 @@ glm_mat4_inv(mat4 mat, mat4 dest) {
 #else
   float t[6];
   float det;
-  float a = mat[0][0], b = mat[0][1], c = mat[0][2], d = mat[0][3],
-        e = mat[1][0], f = mat[1][1], g = mat[1][2], h = mat[1][3],
-        i = mat[2][0], j = mat[2][1], k = mat[2][2], l = mat[2][3],
-        m = mat[3][0], n = mat[3][1], o = mat[3][2], p = mat[3][3];
+  float a = mat->m[0].x, b = mat->m[0].y, c = mat->m[0].z, d = mat->m[0].w,
+        e = mat->m[1].x, f = mat->m[1].y, g = mat->m[1].z, h = mat->m[1].w,
+        i = mat->m[2].x, j = mat->m[2].y, k = mat->m[2].z, l = mat->m[2].w,
+        m = mat->m[3].x, n = mat->m[3].y, o = mat->m[3].z, p = mat->m[3].w;
 
   t[0] = k * p - o * l; t[1] = j * p - n * l; t[2] = j * o - n * k;
   t[3] = i * p - m * l; t[4] = i * o - m * k; t[5] = i * n - m * j;
 
-  dest[0][0] =  f * t[0] - g * t[1] + h * t[2];
-  dest[1][0] =-(e * t[0] - g * t[3] + h * t[4]);
-  dest[2][0] =  e * t[1] - f * t[3] + h * t[5];
-  dest[3][0] =-(e * t[2] - f * t[4] + g * t[5]);
+  dest->m[0].x =  f * t[0] - g * t[1] + h * t[2];
+  dest->m[1].x =-(e * t[0] - g * t[3] + h * t[4]);
+  dest->m[2].x =  e * t[1] - f * t[3] + h * t[5];
+  dest->m[3].x =-(e * t[2] - f * t[4] + g * t[5]);
 
-  dest[0][1] =-(b * t[0] - c * t[1] + d * t[2]);
-  dest[1][1] =  a * t[0] - c * t[3] + d * t[4];
-  dest[2][1] =-(a * t[1] - b * t[3] + d * t[5]);
-  dest[3][1] =  a * t[2] - b * t[4] + c * t[5];
+  dest->m[0].y =-(b * t[0] - c * t[1] + d * t[2]);
+  dest->m[1].y =  a * t[0] - c * t[3] + d * t[4];
+  dest->m[2].y =-(a * t[1] - b * t[3] + d * t[5]);
+  dest->m[3].y =  a * t[2] - b * t[4] + c * t[5];
 
   t[0] = g * p - o * h; t[1] = f * p - n * h; t[2] = f * o - n * g;
   t[3] = e * p - m * h; t[4] = e * o - m * g; t[5] = e * n - m * f;
 
-  dest[0][2] =  b * t[0] - c * t[1] + d * t[2];
-  dest[1][2] =-(a * t[0] - c * t[3] + d * t[4]);
-  dest[2][2] =  a * t[1] - b * t[3] + d * t[5];
-  dest[3][2] =-(a * t[2] - b * t[4] + c * t[5]);
+  dest->m[0].z =  b * t[0] - c * t[1] + d * t[2];
+  dest->m[1].z =-(a * t[0] - c * t[3] + d * t[4]);
+  dest->m[2].z =  a * t[1] - b * t[3] + d * t[5];
+  dest->m[3].z =-(a * t[2] - b * t[4] + c * t[5]);
 
   t[0] = g * l - k * h; t[1] = f * l - j * h; t[2] = f * k - j * g;
   t[3] = e * l - i * h; t[4] = e * k - i * g; t[5] = e * j - i * f;
 
-  dest[0][3] =-(b * t[0] - c * t[1] + d * t[2]);
-  dest[1][3] =  a * t[0] - c * t[3] + d * t[4];
-  dest[2][3] =-(a * t[1] - b * t[3] + d * t[5]);
-  dest[3][3] =  a * t[2] - b * t[4] + c * t[5];
+  dest->m[0].w =-(b * t[0] - c * t[1] + d * t[2]);
+  dest->m[1].w =  a * t[0] - c * t[3] + d * t[4];
+  dest->m[2].w =-(a * t[1] - b * t[3] + d * t[5]);
+  dest->m[3].w =  a * t[2] - b * t[4] + c * t[5];
 
-  det = 1.0f / (a * dest[0][0] + b * dest[1][0]
-              + c * dest[2][0] + d * dest[3][0]);
+  det = 1.0f / (a * dest->m[0].x + b * dest->m[1].x
+              + c * dest->m[2].x + d * dest->m[3].x);
 
   glm_mat4_scale_p(dest, det);
 #endif
@@ -666,9 +666,9 @@ CGLM_INLINE
 void
 glm_mat4_swap_col(mat4 mat, int col1, int col2) {
   CGLM_ALIGN(16) vec4 tmp;
-  glm_vec4_copy(mat[col1], tmp);
-  glm_vec4_copy(mat[col2], mat[col1]);
-  glm_vec4_copy(tmp, mat[col2]);
+  glm_vec4_copy(mat->m + col1, tmp);
+  glm_vec4_copy(mat->m + col2, mat->m + col1);
+  glm_vec4_copy(tmp, mat->m + col2);
 }
 
 /*!
@@ -682,20 +682,20 @@ CGLM_INLINE
 void
 glm_mat4_swap_row(mat4 mat, int row1, int row2) {
   CGLM_ALIGN(16) vec4 tmp;
-  tmp[0] = mat[0][row1];
-  tmp[1] = mat[1][row1];
-  tmp[2] = mat[2][row1];
-  tmp[3] = mat[3][row1];
+  tmp->x = ((float*)mat->m + 0)[row1];
+  tmp->y = ((float*)mat->m + 1)[row1];
+  tmp->z = ((float*)mat->m + 2)[row1];
+  tmp->w = ((float*)mat->m + 3)[row1];
 
-  mat[0][row1] = mat[0][row2];
-  mat[1][row1] = mat[1][row2];
-  mat[2][row1] = mat[2][row2];
-  mat[3][row1] = mat[3][row2];
+  ((float*)mat->m + 0)[row1] = ((float*)mat->m + 0)[row2];
+  ((float*)mat->m + 1)[row1] = ((float*)mat->m + 1)[row2];
+  ((float*)mat->m + 2)[row1] = ((float*)mat->m + 2)[row2];
+  ((float*)mat->m + 3)[row1] = ((float*)mat->m + 3)[row2];
 
-  mat[0][row2] = tmp[0];
-  mat[1][row2] = tmp[1];
-  mat[2][row2] = tmp[2];
-  mat[3][row2] = tmp[3];
+  ((float*)mat->m + 0)[row2] = tmp->x;
+  ((float*)mat->m + 1)[row2] = tmp->y;
+  ((float*)mat->m + 2)[row2] = tmp->z;
+  ((float*)mat->m + 3)[row2] = tmp->w;
 }
 
 /*!
