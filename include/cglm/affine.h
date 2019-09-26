@@ -40,125 +40,125 @@
 #include "mat4.h"
 #include "affine-mat.h"
 
-CGLM_INLINE
-void
-glm_mat4_mul(mat4 m1, mat4 m2, mat4 dest);
+// CGLM_INLINE
+// void
+// glm_mat4_mul(mat4 m1, mat4 m2, mat4 dest);
 
-/*!
- * @brief translate existing transform matrix by v vector
- *        and stores result in same matrix
- *
- * @param[in, out]  m  affine transfrom
- * @param[in]       v  translate vector [x, y, z]
- */
-CGLM_INLINE
-void
-glm_translate(mat4 m, vec3 v) {
-#if defined( __SSE__ ) || defined( __SSE2__ )
-  glmm_store(m[3],
-             _mm_add_ps(_mm_add_ps(_mm_mul_ps(glmm_load(m[0]),
-                                              _mm_set1_ps(v[0])),
-                                   _mm_mul_ps(glmm_load(m[1]),
-                                              _mm_set1_ps(v[1]))),
-                        _mm_add_ps(_mm_mul_ps(glmm_load(m[2]),
-                                              _mm_set1_ps(v[2])),
-                                   glmm_load(m[3]))))
-  ;
-#else
-  float4 v1, v2, v3;
+// /*!
+//  * @brief translate existing transform matrix by v vector
+//  *        and stores result in same matrix
+//  *
+//  * @param[in, out]  m  affine transfrom
+//  * @param[in]       v  translate vector [x, y, z]
+//  */
+// CGLM_INLINE
+// void
+// glm_translate(mat4 m, vec3 v) {
+// #if defined( __SSE__ ) || defined( __SSE2__ )
+//   glmm_store(m[3],
+//              _mm_add_ps(_mm_add_ps(_mm_mul_ps(glmm_load(m[0]),
+//                                               _mm_set1_ps(v[0])),
+//                                    _mm_mul_ps(glmm_load(m[1]),
+//                                               _mm_set1_ps(v[1]))),
+//                         _mm_add_ps(_mm_mul_ps(glmm_load(m[2]),
+//                                               _mm_set1_ps(v[2])),
+//                                    glmm_load(m[3]))))
+//   ;
+// #else
+//   float4 v1, v2, v3;
 
-  glm_vec4_scale(m->m + 0, v->x, &v1);
-  glm_vec4_scale(m->m + 1, v->y, &v2);
-  glm_vec4_scale(m->m + 2, v->z, &v3);
+//   glm_vec4_scale(m->m + 0, (*v).x, &v1);
+//   glm_vec4_scale(m->m + 1, (*v).y, &v2);
+//   glm_vec4_scale(m->m + 2, (*v).z, &v3);
 
-  glm_vec4_add(&v1, m->m + 3, m->m + 3);
-  glm_vec4_add(&v2, m->m + 3, m->m + 3);
-  glm_vec4_add(&v3, m->m + 3, m->m + 3);
-#endif
-}
+//   glm_vec4_add(&v1, m->m + 3, m->m + 3);
+//   glm_vec4_add(&v2, m->m + 3, m->m + 3);
+//   glm_vec4_add(&v3, m->m + 3, m->m + 3);
+// #endif
+// }
 
-/*!
- * @brief translate existing transform matrix by v vector
- *        and store result in dest
- *
- * source matrix will remain same
- *
- * @param[in]  m    affine transfrom
- * @param[in]  v    translate vector [x, y, z]
- * @param[out] dest translated matrix
- */
-CGLM_INLINE
-void
-glm_translate_to(mat4 m, vec3 v, mat4 dest) {
-  glm_mat4_copy(m, dest);
-  glm_translate(dest, v);
-}
+// /*!
+//  * @brief translate existing transform matrix by v vector
+//  *        and store result in dest
+//  *
+//  * source matrix will remain same
+//  *
+//  * @param[in]  m    affine transfrom
+//  * @param[in]  v    translate vector [x, y, z]
+//  * @param[out] dest translated matrix
+//  */
+// CGLM_INLINE
+// void
+// glm_translate_to(mat4 m, vec3 v, mat4 dest) {
+//   glm_mat4_copy(m, dest);
+//   glm_translate(dest, v);
+// }
 
-/*!
- * @brief translate existing transform matrix by x factor
- *
- * @param[in, out]  m  affine transfrom
- * @param[in]       x  x factor
- */
-CGLM_INLINE
-void
-glm_translate_x(mat4 m, float x) {
-#if defined( __SSE__ ) || defined( __SSE2__ )
-  glmm_store(m[3],
-             _mm_add_ps(_mm_mul_ps(glmm_load(m[0]),
-                                   _mm_set1_ps(x)),
-                        glmm_load(m[3])))
-  ;
-#else
-  float4 v1;
-  glm_vec4_scale(m->m, x, &v1);
-  glm_vec4_add(&v1, m->m + 3, m->m + 3);
-#endif
-}
+// /*!
+//  * @brief translate existing transform matrix by x factor
+//  *
+//  * @param[in, out]  m  affine transfrom
+//  * @param[in]       x  x factor
+//  */
+// CGLM_INLINE
+// void
+// glm_translate_x(mat4 m, float x) {
+// #if defined( __SSE__ ) || defined( __SSE2__ )
+//   glmm_store(m[3],
+//              _mm_add_ps(_mm_mul_ps(glmm_load(m[0]),
+//                                    _mm_set1_ps(x)),
+//                         glmm_load(m[3])))
+//   ;
+// #else
+//   float4 v1;
+//   glm_vec4_scale(m->m, x, &v1);
+//   glm_vec4_add(&v1, m->m + 3, m->m + 3);
+// #endif
+// }
 
-/*!
- * @brief translate existing transform matrix by y factor
- *
- * @param[in, out]  m  affine transfrom
- * @param[in]       y  y factor
- */
-CGLM_INLINE
-void
-glm_translate_y(mat4 m, float y) {
-#if defined( __SSE__ ) || defined( __SSE2__ )
-  glmm_store(m[3],
-             _mm_add_ps(_mm_mul_ps(glmm_load(m[1]),
-                                   _mm_set1_ps(y)),
-                        glmm_load(m[3])))
-  ;
-#else
-  float4 v1;
-  glm_vec4_scale(m->m + 1, y, &v1);
-  glm_vec4_add(&v1, m->m + 3, m->m + 3);
-#endif
-}
+// /*!
+//  * @brief translate existing transform matrix by y factor
+//  *
+//  * @param[in, out]  m  affine transfrom
+//  * @param[in]       y  y factor
+//  */
+// CGLM_INLINE
+// void
+// glm_translate_y(mat4 m, float y) {
+// #if defined( __SSE__ ) || defined( __SSE2__ )
+//   glmm_store(m[3],
+//              _mm_add_ps(_mm_mul_ps(glmm_load(m[1]),
+//                                    _mm_set1_ps(y)),
+//                         glmm_load(m[3])))
+//   ;
+// #else
+//   float4 v1;
+//   glm_vec4_scale(m->m + 1, y, &v1);
+//   glm_vec4_add(&v1, m->m + 3, m->m + 3);
+// #endif
+// }
 
-/*!
- * @brief translate existing transform matrix by z factor
- *
- * @param[in, out]  m  affine transfrom
- * @param[in]       z  z factor
- */
-CGLM_INLINE
-void
-glm_translate_z(mat4 m, float z) {
-#if defined( __SSE__ ) || defined( __SSE2__ )
-  glmm_store(m[3],
-             _mm_add_ps(_mm_mul_ps(glmm_load(m[2]),
-                                   _mm_set1_ps(z)),
-                        glmm_load(m[3])))
-  ;
-#else
-  float4 v1;
-  glm_vec4_scale(m->m + 2, z, &v1);
-  glm_vec4_add(&v1, m->m + 3, m->m + 3);
-#endif
-}
+// /*!
+//  * @brief translate existing transform matrix by z factor
+//  *
+//  * @param[in, out]  m  affine transfrom
+//  * @param[in]       z  z factor
+//  */
+// CGLM_INLINE
+// void
+// glm_translate_z(mat4 m, float z) {
+// #if defined( __SSE__ ) || defined( __SSE2__ )
+//   glmm_store(m[3],
+//              _mm_add_ps(_mm_mul_ps(glmm_load(m[2]),
+//                                    _mm_set1_ps(z)),
+//                         glmm_load(m[3])))
+//   ;
+// #else
+//   float4 v1;
+//   glm_vec4_scale(m->m + 2, z, &v1);
+//   glm_vec4_add(&v1, m->m + 3, m->m + 3);
+// #endif
+// }
 
 /*!
  * @brief creates NEW translate transform matrix by v vector
@@ -173,318 +173,318 @@ glm_translate_make(mat4 m, vec3 v) {
   glm_vec3_copy(v, (vec3)(m->m + 3));
 }
 
-/*!
- * @brief scale existing transform matrix by v vector
- *        and store result in dest
- *
- * @param[in]  m    affine transfrom
- * @param[in]  v    scale vector [x, y, z]
- * @param[out] dest scaled matrix
- */
-CGLM_INLINE
-void
-glm_scale_to(mat4 m, vec3 v, mat4 dest) {
-  glm_vec4_scale(m->m + 0, v->x, dest->m + 0);
-  glm_vec4_scale(m->m + 1, v->y, dest->m + 1);
-  glm_vec4_scale(m->m + 2, v->z, dest->m + 2);
+// /*!
+//  * @brief scale existing transform matrix by v vector
+//  *        and store result in dest
+//  *
+//  * @param[in]  m    affine transfrom
+//  * @param[in]  v    scale vector [x, y, z]
+//  * @param[out] dest scaled matrix
+//  */
+// CGLM_INLINE
+// void
+// glm_scale_to(mat4 m, vec3 v, mat4 dest) {
+//   glm_vec4_scale(m->m + 0, (*v).x, dest->m + 0);
+//   glm_vec4_scale(m->m + 1, (*v).y, dest->m + 1);
+//   glm_vec4_scale(m->m + 2, (*v).z, dest->m + 2);
 
-  glm_vec4_copy(m->m + 3, dest->m + 3);
-}
+//   glm_vec4_copy(m->m + 3, dest->m + 3);
+// }
 
-/*!
- * @brief creates NEW scale matrix by v vector
- *
- * @param[out]  m  affine transfrom
- * @param[in]   v  scale vector [x, y, z]
- */
-CGLM_INLINE
-void
-glm_scale_make(mat4 m, vec3 v) {
-  glm_mat4_identity(m);
-  m->m[0].x = v->x;
-  m->m[1].y = v->y;
-  m->m[2].z = v->z;
-}
+// /*!
+//  * @brief creates NEW scale matrix by v vector
+//  *
+//  * @param[out]  m  affine transfrom
+//  * @param[in]   v  scale vector [x, y, z]
+//  */
+// CGLM_INLINE
+// void
+// glm_scale_make(mat4 m, vec3 v) {
+//   glm_mat4_identity(m);
+//   m->m[0].x = (*v).x;
+//   m->m[1].y = (*v).y;
+//   m->m[2].z = (*v).z;
+// }
 
-/*!
- * @brief scales existing transform matrix by v vector
- *        and stores result in same matrix
- *
- * @param[in, out]  m  affine transfrom
- * @param[in]       v  scale vector [x, y, z]
- */
-CGLM_INLINE
-void
-glm_scale(mat4 m, vec3 v) {
-  glm_scale_to(m, v, m);
-}
+// /*!
+//  * @brief scales existing transform matrix by v vector
+//  *        and stores result in same matrix
+//  *
+//  * @param[in, out]  m  affine transfrom
+//  * @param[in]       v  scale vector [x, y, z]
+//  */
+// CGLM_INLINE
+// void
+// glm_scale(mat4 m, vec3 v) {
+//   glm_scale_to(m, v, m);
+// }
 
-/*!
- * @brief applies uniform scale to existing transform matrix v = [s, s, s]
- *        and stores result in same matrix
- *
- * @param[in, out]  m  affine transfrom
- * @param[in]       s  scale factor
- */
-CGLM_INLINE
-void
-glm_scale_uni(mat4 m, float s) {
-  CGLM_ALIGN(8) float3 v = (float3){ s, s, s };
-  glm_scale_to(m, &v, m);
-}
+// /*!
+//  * @brief applies uniform scale to existing transform matrix v = [s, s, s]
+//  *        and stores result in same matrix
+//  *
+//  * @param[in, out]  m  affine transfrom
+//  * @param[in]       s  scale factor
+//  */
+// CGLM_INLINE
+// void
+// glm_scale_uni(mat4 m, float s) {
+//   CGLM_ALIGN(8) float3 v = (float3){ s, s, s };
+//   glm_scale_to(m, &v, m);
+// }
 
-/*!
- * @brief rotate existing transform matrix around X axis by angle
- *        and store result in dest
- *
- * @param[in]   m      affine transfrom
- * @param[in]   angle  angle (radians)
- * @param[out]  dest   rotated matrix
- */
-CGLM_INLINE
-void
-glm_rotate_x(mat4 m, float angle, mat4 dest) {
-  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
-  float c, s;
+// /*!
+//  * @brief rotate existing transform matrix around X axis by angle
+//  *        and store result in dest
+//  *
+//  * @param[in]   m      affine transfrom
+//  * @param[in]   angle  angle (radians)
+//  * @param[out]  dest   rotated matrix
+//  */
+// CGLM_INLINE
+// void
+// glm_rotate_x(mat4 m, float angle, mat4 dest) {
+//   CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
+//   float c, s;
 
-  c = cosf(angle);
-  s = sinf(angle);
+//   c = cosf(angle);
+//   s = sinf(angle);
 
-  t.m[1].y =  c;
-  t.m[1].z =  s;
-  t.m[2].y = -s;
-  t.m[2].z =  c;
+//   t.m[1].y =  c;
+//   t.m[1].z =  s;
+//   t.m[2].y = -s;
+//   t.m[2].z =  c;
 
-  glm_mul_rot(m, &t, dest);
-}
+//   glm_mul_rot(m, &t, dest);
+// }
 
-/*!
- * @brief rotate existing transform matrix around Y axis by angle
- *        and store result in dest
- *
- * @param[in]   m      affine transfrom
- * @param[in]   angle  angle (radians)
- * @param[out]  dest   rotated matrix
- */
-CGLM_INLINE
-void
-glm_rotate_y(mat4 m, float angle, mat4 dest) {
-  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
-  float c, s;
+// /*!
+//  * @brief rotate existing transform matrix around Y axis by angle
+//  *        and store result in dest
+//  *
+//  * @param[in]   m      affine transfrom
+//  * @param[in]   angle  angle (radians)
+//  * @param[out]  dest   rotated matrix
+//  */
+// CGLM_INLINE
+// void
+// glm_rotate_y(mat4 m, float angle, mat4 dest) {
+//   CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
+//   float c, s;
 
-  c = cosf(angle);
-  s = sinf(angle);
+//   c = cosf(angle);
+//   s = sinf(angle);
 
-  t.m[0].x =  c;
-  t.m[0].z = -s;
-  t.m[2].x =  s;
-  t.m[2].z =  c;
+//   t.m[0].x =  c;
+//   t.m[0].z = -s;
+//   t.m[2].x =  s;
+//   t.m[2].z =  c;
 
-  glm_mul_rot(m, &t, dest);
-}
+//   glm_mul_rot(m, &t, dest);
+// }
 
-/*!
- * @brief rotate existing transform matrix around Z axis by angle
- *        and store result in dest
- *
- * @param[in]   m      affine transfrom
- * @param[in]   angle  angle (radians)
- * @param[out]  dest   rotated matrix
- */
-CGLM_INLINE
-void
-glm_rotate_z(mat4 m, float angle, mat4 dest) {
-  CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
-  float c, s;
+// /*!
+//  * @brief rotate existing transform matrix around Z axis by angle
+//  *        and store result in dest
+//  *
+//  * @param[in]   m      affine transfrom
+//  * @param[in]   angle  angle (radians)
+//  * @param[out]  dest   rotated matrix
+//  */
+// CGLM_INLINE
+// void
+// glm_rotate_z(mat4 m, float angle, mat4 dest) {
+//   CGLM_ALIGN_MAT _mat4 t = GLM_MAT4_IDENTITY_INIT;
+//   float c, s;
 
-  c = cosf(angle);
-  s = sinf(angle);
+//   c = cosf(angle);
+//   s = sinf(angle);
 
-  t.m[0].x =  c;
-  t.m[0].y =  s;
-  t.m[1].x = -s;
-  t.m[1].y =  c;
+//   t.m[0].x =  c;
+//   t.m[0].y =  s;
+//   t.m[1].x = -s;
+//   t.m[1].y =  c;
 
-  glm_mul_rot(m, &t, dest);
-}
+//   glm_mul_rot(m, &t, dest);
+// }
 
-/*!
- * @brief creates NEW rotation matrix by angle and axis
- *
- * axis will be normalized so you don't need to normalize it
- *
- * @param[out] m     affine transfrom
- * @param[in]  angle angle (radians)
- * @param[in]  axis  axis
- */
-CGLM_INLINE
-void
-glm_rotate_make(mat4 m, float angle, vec3 axis) {
-  CGLM_ALIGN(8) float3 axisn, v, vs;
-  float c;
+// /*!
+//  * @brief creates NEW rotation matrix by angle and axis
+//  *
+//  * axis will be normalized so you don't need to normalize it
+//  *
+//  * @param[out] m     affine transfrom
+//  * @param[in]  angle angle (radians)
+//  * @param[in]  axis  axis
+//  */
+// CGLM_INLINE
+// void
+// glm_rotate_make(mat4 m, float angle, vec3 axis) {
+//   CGLM_ALIGN(8) float3 axisn, v, vs;
+//   float c;
 
-  c = cosf(angle);
+//   c = cosf(angle);
 
-  glm_vec3_normalize_to(axis, &axisn);
-  glm_vec3_scale(&axisn, 1.0f - c, &v);
-  glm_vec3_scale(&axisn, sinf(angle), &vs);
+//   glm_vec3_normalize_to(axis, &axisn);
+//   glm_vec3_scale(&axisn, 1.0f - c, &v);
+//   glm_vec3_scale(&axisn, sinf(angle), &vs);
 
-  glm_vec3_scale(&axisn, v.x, (vec3)(m->m + 0));
-  glm_vec3_scale(&axisn, v.y, (vec3)(m->m + 1));
-  glm_vec3_scale(&axisn, v.z, (vec3)(m->m + 2));
+//   glm_vec3_scale(&axisn, v.x, (vec3)(m->m + 0));
+//   glm_vec3_scale(&axisn, v.y, (vec3)(m->m + 1));
+//   glm_vec3_scale(&axisn, v.z, (vec3)(m->m + 2));
 
-  m->m[0].x += c;       m->m[1].x -= vs.z;    m->m[2].x += vs.y;
-  m->m[0].y += vs.z;    m->m[1].y += c;       m->m[2].y -= vs.x;
-  m->m[0].z -= vs.y;    m->m[1].z += vs.x;    m->m[2].z += c;
+//   m->m[0].x += c;       m->m[1].x -= vs.z;    m->m[2].x += vs.y;
+//   m->m[0].y += vs.z;    m->m[1].y += c;       m->m[2].y -= vs.x;
+//   m->m[0].z -= vs.y;    m->m[1].z += vs.x;    m->m[2].z += c;
 
-  m->m[0].w = m->m[1].w = m->m[2].w = m->m[3].x = m->m[3].y = m->m[3].z = 0.0f;
-  m->m[3].w = 1.0f;
-}
+//   m->m[0].w = m->m[1].w = m->m[2].w = m->m[3].x = m->m[3].y = m->m[3].z = 0.0f;
+//   m->m[3].w = 1.0f;
+// }
 
-/*!
- * @brief rotate existing transform matrix around given axis by angle
- *
- * @param[in, out]  m      affine transfrom
- * @param[in]       angle  angle (radians)
- * @param[in]       axis   axis
- */
-CGLM_INLINE
-void
-glm_rotate(mat4 m, float angle, vec3 axis) {
-  CGLM_ALIGN_MAT mat4 rot;
-  glm_rotate_make(rot, angle, axis);
-  glm_mul_rot(m, rot, m);
-}
+// /*!
+//  * @brief rotate existing transform matrix around given axis by angle
+//  *
+//  * @param[in, out]  m      affine transfrom
+//  * @param[in]       angle  angle (radians)
+//  * @param[in]       axis   axis
+//  */
+// CGLM_INLINE
+// void
+// glm_rotate(mat4 m, float angle, vec3 axis) {
+//   CGLM_ALIGN_MAT mat4 rot;
+//   glm_rotate_make(rot, angle, axis);
+//   glm_mul_rot(m, rot, m);
+// }
 
-/*!
- * @brief rotate existing transform
- *        around given axis by angle at given pivot point (rotation center)
- *
- * @param[in, out]  m      affine transfrom
- * @param[in]       pivot  rotation center
- * @param[in]       angle  angle (radians)
- * @param[in]       axis   axis
- */
-CGLM_INLINE
-void
-glm_rotate_at(mat4 m, vec3 pivot, float angle, vec3 axis) {
-  CGLM_ALIGN(8) vec3 pivotInv;
+// /*!
+//  * @brief rotate existing transform
+//  *        around given axis by angle at given pivot point (rotation center)
+//  *
+//  * @param[in, out]  m      affine transfrom
+//  * @param[in]       pivot  rotation center
+//  * @param[in]       angle  angle (radians)
+//  * @param[in]       axis   axis
+//  */
+// CGLM_INLINE
+// void
+// glm_rotate_at(mat4 m, vec3 pivot, float angle, vec3 axis) {
+//   CGLM_ALIGN(8) vec3 pivotInv;
 
-  glm_vec3_negate_to(pivot, pivotInv);
+//   glm_vec3_negate_to(pivot, pivotInv);
 
-  glm_translate(m, pivot);
-  glm_rotate(m, angle, axis);
-  glm_translate(m, pivotInv);
-}
+//   glm_translate(m, pivot);
+//   glm_rotate(m, angle, axis);
+//   glm_translate(m, pivotInv);
+// }
 
-/*!
- * @brief creates NEW rotation matrix by angle and axis at given point
- *
- * this creates rotation matrix, it assumes you don't have a matrix
- *
- * this should work faster than glm_rotate_at because it reduces
- * one glm_translate.
- *
- * @param[out] m      affine transfrom
- * @param[in]  pivot  rotation center
- * @param[in]  angle  angle (radians)
- * @param[in]  axis   axis
- */
-CGLM_INLINE
-void
-glm_rotate_atm(mat4 m, vec3 pivot, float angle, vec3 axis) {
-  CGLM_ALIGN(8) vec3 pivotInv;
+// /*!
+//  * @brief creates NEW rotation matrix by angle and axis at given point
+//  *
+//  * this creates rotation matrix, it assumes you don't have a matrix
+//  *
+//  * this should work faster than glm_rotate_at because it reduces
+//  * one glm_translate.
+//  *
+//  * @param[out] m      affine transfrom
+//  * @param[in]  pivot  rotation center
+//  * @param[in]  angle  angle (radians)
+//  * @param[in]  axis   axis
+//  */
+// CGLM_INLINE
+// void
+// glm_rotate_atm(mat4 m, vec3 pivot, float angle, vec3 axis) {
+//   CGLM_ALIGN(8) vec3 pivotInv;
 
-  glm_vec3_negate_to(pivot, pivotInv);
+//   glm_vec3_negate_to(pivot, pivotInv);
 
-  glm_translate_make(m, pivot);
-  glm_rotate(m, angle, axis);
-  glm_translate(m, pivotInv);
-}
+//   glm_translate_make(m, pivot);
+//   glm_rotate(m, angle, axis);
+//   glm_translate(m, pivotInv);
+// }
 
-/*!
- * @brief decompose scale vector
- *
- * @param[in]  m  affine transform
- * @param[out] s  scale vector (Sx, Sy, Sz)
- */
-CGLM_INLINE
-void
-glm_decompose_scalev(mat4 m, vec3 s) {
-  s->x = glm_vec3_norm((vec3)(m->m + 0));
-  s->y = glm_vec3_norm((vec3)(m->m + 1));
-  s->z = glm_vec3_norm((vec3)(m->m + 2));
-}
+// /*!
+//  * @brief decompose scale vector
+//  *
+//  * @param[in]  m  affine transform
+//  * @param[out] s  scale vector (Sx, Sy, Sz)
+//  */
+// CGLM_INLINE
+// void
+// glm_decompose_scalev(mat4 m, vec3 s) {
+//   (*s).x = glm_vec3_norm((vec3)(m->m + 0));
+//   (*s).y = glm_vec3_norm((vec3)(m->m + 1));
+//   (*s).z = glm_vec3_norm((vec3)(m->m + 2));
+// }
 
-/*!
- * @brief returns true if matrix is uniform scaled. This is helpful for
- *        creating normal matrix.
- *
- * @param[in] m m
- *
- * @return boolean
- */
-CGLM_INLINE
-bool
-glm_uniscaled(mat4 m) {
-  CGLM_ALIGN(8) float3 s;
-  glm_decompose_scalev(m, &s);
-  return glm_vec3_eq_all(&s);
-}
+// /*!
+//  * @brief returns true if matrix is uniform scaled. This is helpful for
+//  *        creating normal matrix.
+//  *
+//  * @param[in] m m
+//  *
+//  * @return boolean
+//  */
+// CGLM_INLINE
+// bool
+// glm_uniscaled(mat4 m) {
+//   CGLM_ALIGN(8) float3 s;
+//   glm_decompose_scalev(m, &s);
+//   return glm_vec3_eq_all(&s);
+// }
 
-/*!
- * @brief decompose rotation matrix (mat4) and scale vector [Sx, Sy, Sz]
- *        DON'T pass projected matrix here
- *
- * @param[in]  m affine transform
- * @param[out] r rotation matrix
- * @param[out] s scale matrix
- */
-CGLM_INLINE
-void
-glm_decompose_rs(mat4 m, mat4 r, vec3 s) {
-  CGLM_ALIGN(16) float4 t = (float4){0.0f, 0.0f, 0.0f, 1.0f};
-  CGLM_ALIGN(8)  float3 v;
+// /*!
+//  * @brief decompose rotation matrix (mat4) and scale vector [Sx, Sy, Sz]
+//  *        DON'T pass projected matrix here
+//  *
+//  * @param[in]  m affine transform
+//  * @param[out] r rotation matrix
+//  * @param[out] s scale matrix
+//  */
+// CGLM_INLINE
+// void
+// glm_decompose_rs(mat4 m, mat4 r, vec3 s) {
+//   CGLM_ALIGN(16) float4 t = (float4){0.0f, 0.0f, 0.0f, 1.0f};
+//   CGLM_ALIGN(8)  float3 v;
 
-  glm_vec4_copy(m->m + 0, r->m + 0);
-  glm_vec4_copy(m->m + 1, r->m + 1);
-  glm_vec4_copy(m->m + 2, r->m + 2);
-  glm_vec4_copy(&t,       r->m + 3);
+//   glm_vec4_copy(m->m + 0, r->m + 0);
+//   glm_vec4_copy(m->m + 1, r->m + 1);
+//   glm_vec4_copy(m->m + 2, r->m + 2);
+//   glm_vec4_copy(&t,       r->m + 3);
 
-  s->x = glm_vec3_norm((vec3)(m->m + 0));
-  s->y = glm_vec3_norm((vec3)(m->m + 1));
-  s->z = glm_vec3_norm((vec3)(m->m + 2));
+//   (*s).x = glm_vec3_norm((vec3)(m->m + 0));
+//   (*s).y = glm_vec3_norm((vec3)(m->m + 1));
+//   (*s).z = glm_vec3_norm((vec3)(m->m + 2));
 
-  glm_vec4_scale(r->m + 0, 1.0f/s->x, r->m + 0);
-  glm_vec4_scale(r->m + 1, 1.0f/s->y, r->m + 1);
-  glm_vec4_scale(r->m + 2, 1.0f/s->z, r->m + 2);
+//   glm_vec4_scale(r->m + 0, 1.0f/((*s).x), r->m + 0);
+//   glm_vec4_scale(r->m + 1, 1.0f/((*s).y), r->m + 1);
+//   glm_vec4_scale(r->m + 2, 1.0f/((*s).z), r->m + 2);
 
-  /* Note from Apple Open Source (asume that the matrix is orthonormal):
-     check for a coordinate system flip.  If the determinant
-     is -1, then negate the matrix and the scaling factors. */
-  glm_vec3_cross((vec3)(m->m + 0), (vec3)(m->m + 1), &v);
-  if (glm_vec3_dot(&v, (vec3)(m->m + 2)) < 0.0f) {
-    glm_vec4_negate(r->m + 0);
-    glm_vec4_negate(r->m + 1);
-    glm_vec4_negate(r->m + 2);
-    glm_vec3_negate(s);
-  }
-}
+//   /* Note from Apple Open Source (asume that the matrix is orthonormal):
+//      check for a coordinate system flip.  If the determinant
+//      is -1, then negate the matrix and the scaling factors. */
+//   glm_vec3_cross((vec3)(m->m + 0), (vec3)(m->m + 1), &v);
+//   if (glm_vec3_dot(&v, (vec3)(m->m + 2)) < 0.0f) {
+//     glm_vec4_negate(r->m + 0);
+//     glm_vec4_negate(r->m + 1);
+//     glm_vec4_negate(r->m + 2);
+//     glm_vec3_negate(s);
+//   }
+// }
 
-/*!
- * @brief decompose affine transform, TODO: extract shear factors.
- *        DON'T pass projected matrix here
- *
- * @param[in]  m affine transfrom
- * @param[out] t translation vector
- * @param[out] r rotation matrix (mat4)
- * @param[out] s scaling vector [X, Y, Z]
- */
-CGLM_INLINE
-void
-glm_decompose(mat4 m, vec4 t, mat4 r, vec3 s) {
-  glm_vec4_copy(m->m + 3, t);
-  glm_decompose_rs(m, r, s);
-}
+// /*!
+//  * @brief decompose affine transform, TODO: extract shear factors.
+//  *        DON'T pass projected matrix here
+//  *
+//  * @param[in]  m affine transfrom
+//  * @param[out] t translation vector
+//  * @param[out] r rotation matrix (mat4)
+//  * @param[out] s scaling vector [X, Y, Z]
+//  */
+// CGLM_INLINE
+// void
+// glm_decompose(mat4 m, vec4 t, mat4 r, vec3 s) {
+//   glm_vec4_copy(m->m + 3, t);
+//   glm_decompose_rs(m, r, s);
+// }
 
 #endif /* cglm_affine_h */
